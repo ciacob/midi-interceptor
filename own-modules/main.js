@@ -5,7 +5,9 @@ const {
   setupMidiInput,
   setMidiTransformer,
   setInputs,
+  setOutput,
 } = require("./utils");
+const midi = require("midi");
 
 /**
  * Main entry point in application's logic. It is called by cli-primer's logic
@@ -37,17 +39,9 @@ function execute(inputData, utils, monitoringFn) {
     utils.setDebugMode(true);
   }
 
-  //   [
-  //     { type: "range", midiFrom: 74, midiTo: 88, channel: 1 }, // sopranos
-  //     { type: "range", midiFrom: 63, midiTo: 73, channel: 2 }, // altos
-  //     { type: "range", midiFrom: 55, midiTo: 62, channel: 3 }, // tenors
-  //     { type: "range", midiFrom: 35, midiTo: 54, channel: 4 }, // basses
-  //   ];
-
   // Build a function to transform incoming MIDI messages.
-  setMidiTransformer(
-    makeClosure(transformMidiSrc, buildSplitTable(splitDefinitions))
-  );
+  const splitTable = buildSplitTable(splitDefinitions);
+  setMidiTransformer(makeClosure(transformMidiSrc, splitTable));
 
   // List all available MIDI output ports and locate the virtual output port.
   const output = new midi.Output();
@@ -74,6 +68,7 @@ function execute(inputData, utils, monitoringFn) {
   // Connect to the virtual output or error out if not found.
   if (vOutPortIndex !== null) {
     output.openPort(vOutPortIndex);
+    setOutput(output);
     $m({
       type: "info",
       message: `Connected to virtual MIDI output: ${vOutPortName}`,
@@ -105,15 +100,31 @@ function execute(inputData, utils, monitoringFn) {
     if (inputInstance) {
       $m({
         type: "info",
-        message: `Listening to MIDI input port ${inputInstance.getPortName}...`,
+        message: `Listening to MIDI input port ${inputInstance.getPortName(
+          i
+        )}...`,
       });
       inputInstances.push(inputInstance);
     } else {
       $m({
         type: "debug",
-        message: `Skipped MIDI input port ${inputInstance.getPortName}.`,
+        message: `Skipped MIDI input port @${i}.`,
       });
     }
   }
+  if (!inputInstances.length) {
+    $m({
+      type: "warn",
+      message: `Not listening to any MIDI input devices. You may want to check your settings. Exiting.`,
+    });
+    return 1;
+  }
   setInputs(inputInstances);
+
+  // Returning something else than 0, 1 or 2 is needed in order to keep the process running.
+  return 3;
 }
+
+module.exports = {
+  execute,
+};

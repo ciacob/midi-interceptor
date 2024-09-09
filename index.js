@@ -8,7 +8,7 @@ const { name, version } = getAppInfo(monitoringFn);
 (async function () {
   const exitValue = await wrapAndRun(
     {
-      showDebugMessages: true,
+      showDebugMessages: false,
       useOutputDir: false,
       useSessionControl: false,
       useConfig: true,

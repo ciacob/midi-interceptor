@@ -6,18 +6,35 @@ const midi = require("midi");
 const $m = monitoringFn || function () {};
 let transformMidi = function () {};
 let inputInstances = [];
-
-function setMidiTransformer(fnTransformer) {
-  transformMidi = fnTransformer;
-}
-
-function setInputs(inputsList) {
-  inputInstances = inputsList;
-}
+let output;
 
 // Flag to raise when the `cleanup` function has been called, used to protect
 // already executing shutdown logic.
 let cleanupCalled = false;
+
+/**
+ * Setter for `transformMidi`.
+ * @param {Function} fnTransformer
+ */
+function setMidiTransformer(fnTransformer) {
+  transformMidi = fnTransformer;
+}
+
+/**
+ * Setter for `inputInstances`.
+ * @param {midi.Input[]} inputsList
+ */
+function setInputs(inputsList) {
+  inputInstances = inputsList;
+}
+
+/**
+ * Setter for `output`.
+ * @param {midi.Output} midiOut
+ */
+function setOutput(midiOut) {
+  output = midiOut;
+}
 
 /**
  * Creates a closure that wraps the given source function with the provided context arguments.
@@ -173,7 +190,7 @@ function transformMidiSrc(splitTable, deltaTime, message) {
   $m({
     type: "debug",
     message: `${
-      isNoteOn
+      isNoteOn && !isFakeNoteOff
         ? "NOTE ON"
         : isGenuineNoteOff || isFakeNoteOff
         ? "NOTE OFF"
@@ -186,7 +203,7 @@ function transformMidiSrc(splitTable, deltaTime, message) {
     const channel = splitTable[note];
     $m({
       type: "debug",
-      message: `REROUTED TO CHANNEL: ${channel - 1}`,
+      message: `REROUTED TO CHANNEL: ${channel}`,
     });
     const newStatus = (status & 0xf0) | (channel - 1);
     return [newStatus, note, velocity];
@@ -337,4 +354,5 @@ module.exports = {
   cleanup,
   setMidiTransformer,
   setInputs,
+  setOutput,
 };
