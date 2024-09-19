@@ -1,14 +1,17 @@
 {
   "name": "midi-interceptor",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "A tool to intercept and handle MIDI messages.",
   "main": "index.js",
+  "bin": {
+    "midi-interceptor": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["MIDI", "interceptor", "music", "node"],
+  "author": "Claudius Iacob <claudius.iacob@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "cli-primer": "^1.0.15",
     "midi": "^2.0.0"

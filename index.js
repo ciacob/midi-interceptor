@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { wrapAndRun, getAppInfo, monitoringFn } = require("cli-primer");
 const { execute } = require("./own-modules/main");
 const { cleanup } = require("./own-modules/utils");
