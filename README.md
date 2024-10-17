@@ -27,7 +27,7 @@ npm install -g midi-interceptor
       1. Open __Audio MIDI Setup__.
       2. Go to __Window > Show MIDI Studio__.
       3. Double-click __IAC Driver__ and check __Device is online__.
-      4. Create a new port (e.g., name it "MIDI Interceptor Output") and note the name you gave it.
+      4. Create a new port (e.g., name it "MIDI Interceptor Output") and note the name you gave it. Note that "IAC Driver " might get prepended to the actual name you give there. You might need to provide something like, e.g., "IAC Driver MIDI Interceptor Output" instead (remember to use quotes for any argument values that contains spaces).
 
     * __Linux__: Depending on your distribution, there may be a built-in virtual MIDI port, or you may need to install and configure an additional package. Consult your distribution's documentation for details.
 
